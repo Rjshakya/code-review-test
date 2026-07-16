@@ -32,12 +32,12 @@ app
   .get("/user/:id", (c) => {
     const { id } = c.req.param();
     return c.json(users.find((u) => u.id.toString() === id));
+  })
+  .post("/user", async (c) => {
+    const user = await c.req.json<User>();
+    users.push(user);
+    return c.json(user);
   });
-// .post("/user", async (c) => {
-//   const user = await c.req.json<User>();
-//   users.push(user);
-//   return c.json(user);
-// })
 // .put("/user/:id" , async(c) => {
 //
 //   const {id } = c.req.param()
