@@ -37,12 +37,9 @@ app
     const user = await c.req.json<User>();
     users.push(user);
     return c.json(user);
+  })
+  .put("/user/:id", async (c) => {
+    const { id } = c.req.param();
   });
-// .put("/user/:id" , async(c) => {
-//
-//   const {id } = c.req.param()
-//
-//
-// })
 
 export default app;
