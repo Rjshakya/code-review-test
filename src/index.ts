@@ -46,7 +46,7 @@ app
     if (!existing) return c.json({ message: "user didn't exit" }, 404);
 
     const newUser = { ...existing, name: body.name };
-    // users.push(newUser);
+    users.push(newUser);
 
     return c.json({ message: "user updated", data: newUser }, 200);
   });
