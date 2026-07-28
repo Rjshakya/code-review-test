@@ -7,7 +7,7 @@ type User = {
   name: string;
 };
 
-const users: User[] = [
+let users: User[] = [
   {
     id: 1,
     name: "raj",
@@ -49,6 +49,20 @@ app
     users.push(newUser);
 
     return c.json({ message: "user updated", data: newUser }, 200);
+  })
+  .delete("/:id", async (c) => {
+    const { id } = c.req.param();
+
+    const user = users.find((u) => u.id.toString() === id);
+
+    if (!user?.id) {
+      return c.json({ message: "user not found" }, 404);
+    }
+
+    const filtered = users.filter((u) => u.id.toString() !== id);
+    users = filtered;
+
+    return c.json({ message: "user deleted" }, 200);
   });
 
 export default app;
