@@ -1,9 +1,68 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
 
-const app = new Hono()
+const app = new Hono();
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+type User = {
+  id: number;
+  name: string;
+};
 
-export default app
+let users: User[] = [
+  {
+    id: 1,
+    name: "raj",
+  },
+  {
+    id: 2,
+    name: "sham",
+  },
+  {
+    id: 3,
+    name: "ben",
+  },
+];
+
+app
+  .get("/", (c) => {
+    return c.text("Hello Hono!");
+  })
+  .get("/users", (c) => {
+    return c.json(users);
+  })
+  .get("/user/:id", (c) => {
+    const { id } = c.req.param();
+    return c.json(users.find((u) => u.id.toString() === id));
+  })
+  .post("/user", async (c) => {
+    const user = await c.req.json<User>();
+    users.push(user);
+    return c.json(user);
+  })
+  .put("/user/:id", async (c) => {
+    const { id } = c.req.param();
+    const body = await c.req.json<{ name: string }>();
+    const existing = users.find((u) => u.id.toString() == id);
+
+    if (!existing) return c.json({ message: "user didn't exit" }, 404);
+
+    const newUser = { ...existing, name: body.name };
+    users.push(newUser);
+
+    return c.json({ message: "user updated", data: newUser }, 200);
+  })
+  .delete("/:id", async (c) => {
+    const { id } = c.req.param();
+
+    const user = users.find((u) => u.id.toString() === id);
+
+    if (!user?.id) {
+      return c.json({ message: "user not found" }, 404);
+    }
+
+    const filtered = users.filter((u) => u.id.toString() !== id);
+    users = filtered;
+
+    return c.json({ message: "user deleted" }, 200);
+  });
+
+export default app;
